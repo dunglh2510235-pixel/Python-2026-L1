@@ -1,7 +1,6 @@
 
 def studentcount(): #student count
     n = int(input("enter student number: "))
-    print ("number of students is: ", n)
     return n
 
 
@@ -10,41 +9,35 @@ def studentcount(): #student count
 
 def coursecount():
     k = int(input("enter course number: "))
-    print ("number of course is: ", k)
     return k
 
 
-
-
-def studentadd():
+def studentadd(n):
 
     #students
-    n = studentcount()
-
-    print ("student info\n")
+    print ("\nstudent info\n")
 
     students = []
     for i in range (n):
-        id = int(input("enter id of student: "))
+        id = (input("enter id of student: "))
         name = str(input("name: "))
         dob = str(input("dob: "))
         student = {
             "id": id,
             "name": name,
             "dob": dob,
+            "grades": {}
         }
         students.append(student)
-    print (students)
     return students
 
 
 
 
-def courseadd():
+def courseadd(k):
 
 
     courses = []
-    k = coursecount()
 
 
     for i in range (k):
@@ -56,33 +49,78 @@ def courseadd():
         }
 
         courses.append(course)
-    print (courses)
     return courses
 
-def grading():
+def grading(k, students, courses, n):
 
-    gname = str(input("enter course name to grade: "))
-    k = coursecount()
-    courses = courseadd()
-    n = studentcount()
+    gname = str(input("enter course name to grade (type done if out): "))
 
-    grades = []
+    if gname == "done":
+        return
 
     for i in range(k):
         if courses[i]["name"] == gname:
             break
     else:
         print("unavailable")
-        return
+        return grading(k, students, courses, n)
 
     for m in range (n):
-      stgrade = float(input("enter grades: "))
+        grade = float(input("enter grades for " + students[m]["name"] + ": " ))
 
-      grades.append(stgrade)
-    print("grades:", grades)
+        students[m]["grades"][gname] = grade
+
+
+    return grading(k, students, courses, n)
+
+      
+    
+def grlist(students, n, courses, k):
+    find = input("enter course name to view grades (type done if out): ")
+
+    if find == "done":
+        return
+    
+    i = 0
+    for i in range (k):
+        if courses[i]["name"] == find:
+            break
+    else:
+        print("unavailable")
+        return grlist(students, n, courses, k)
+
+    print ("\n=grades for", find, "=\n")
+
+ #listing 
+    for i in range (n):
+        print (students[i]["name"], ":", students[i]["grades"][find])
+    return grlist(students, n, courses, k)
+
+
+def stulist(n, students):
+    print("\n--student list--\n")
+    for i in range (n):
+        print(i+1, ":", students[i])
+
+    print("")
     return
 
 
 
+def clist(k, courses):
+    print("\n--course list--\n")
+    for i in range (k):
+        print(i+1, ":", courses[i])
+
+    print("")
+    return
 
 
+n = studentcount()
+students = studentadd(n)
+stulist(n, students)
+k = coursecount()
+courses = courseadd(k)
+clist(k, courses)
+grading(k, students, courses, n)
+grlist(students, n, courses, k)
